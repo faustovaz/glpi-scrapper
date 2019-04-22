@@ -28,6 +28,7 @@ if __name__ == '__main__':
     load_dotenv(env_file)
     glpi_user = os.getenv('GLPI_USER')
     glpi_password = os.getenv('GLPI_PASSWORD')
+    cred_files = os.path.join(os.path.dirname(__file__), 'credentials.json')
 
     creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json')
     service = build('sheets', 'v4', credentials=creds)
