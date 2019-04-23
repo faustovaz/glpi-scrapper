@@ -3,35 +3,41 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException
 
-def login_into_new_glpi(user, password):
-    return login_into_glpi('https://chamados.unila.edu.br', user, password)
+def get_search_result_from_new_glpi(user, password, search_id):
+    glpi_url = 'https://chamados.unila.edu.br'
+    search_link = '{}/front/savedsearch.php?action=load&id={}' \
+                    .format(glpi_url, search_id)
+    tables = get_tables_from_glpi(glpi_url, user, password, search_link)
+    return get_totals_from_glpi(tables,
+                                system_index=6,
+                                employee_index=8,
+                                user_index=7)
 
-def login_into_old_glpi(user, password):
-    return login_into_glpi('https://chamados-old.unila.edu.br', user, password)
+def get_search_result_from_old_glpi(user, password, search_id):
+    glpi_url = 'https://chamados-old.unila.edu.br'
+    search_link = '{}/front/savedsearch.php?action=load&id={}' \
+                    .format(glpi_url, search_id)
+    tables = get_tables_from_glpi(glpi_url, user, password, search_link)
+    return get_totals_from_glpi(tables,
+                                system_index=4,
+                                employee_index=7,
+                                user_index=3)
 
-def login_into_glpi(url, user, password):
-    options = webdriver.FirefoxOptions()
-    options.headless = True
-    browser = webdriver.Firefox(options=options)
-    browser.get(url)
-    browser.find_element_by_id('login_name').send_keys(user)
-    browser.find_element_by_id('login_password').send_keys(password)
-    browser.find_element_by_name('submit').click()
-    return browser
+def get_totals_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 18)
 
-def get_tables_from_old_glpi(user, password):
-    browser = login_into_old_glpi(user, password)
-    browser.get('https://chamados-old.unila.edu.br/front/savedsearch.php?' \
-                                                            'action=load&id=38')
-    return get_tables_from_glpi(browser)
+def get_closed_today_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 31)
 
-def get_tables_from_new_glpi(user, password):
-    browser = login_into_new_glpi(user, password)
-    browser.get('https://chamados.unila.edu.br/front/savedsearch.php' \
-                                                        '?action=load&id=18')
-    return get_tables_from_glpi(browser)
+def get_totals_from_old_glpi(user, password):
+    return get_search_result_from_old_glpi(user, password, 38)
 
-def get_tables_from_glpi(browser):
+def get_closed_today_from_old_glpi(user, password):
+    return get_search_result_from_old_glpi(user, password, 188)
+
+def get_tables_from_glpi(url, user, password, savedSearchLink):
+    browser = login_into_glpi(url, user, password)
+    browser.get(savedSearchLink)
     tables = []
     while True:
         try:
@@ -48,15 +54,15 @@ def get_tables_from_glpi(browser):
     browser.close()
     return tables
 
-def get_totals_from_old_glpi(user, password):
-    tables = get_tables_from_old_glpi(user, password)
-    return get_totals_from_glpi(tables, system_index=4, employee_index=7,
-                                                                user_index=3)
-
-def get_totals_from_new_glpi(user, password):
-    tables = get_tables_from_new_glpi(user, password)
-    return get_totals_from_glpi(tables, system_index=6, employee_index=8,
-                                                                user_index=7)
+def login_into_glpi(url, user, password):
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    browser = webdriver.Firefox(options=options)
+    browser.get(url)
+    browser.find_element_by_id('login_name').send_keys(user)
+    browser.find_element_by_id('login_password').send_keys(password)
+    browser.find_element_by_name('submit').click()
+    return browser
 
 def get_totals_from_glpi(tables, **kw):
     users, employees, systems = [{},{},{}]
