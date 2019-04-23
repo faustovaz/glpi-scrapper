@@ -44,6 +44,11 @@ if __name__ == '__main__':
     old_glpi_totals = s.get_totals_from_old_glpi(glpi_user, glpi_password)
     glpi_totals = s.glpi_totals(old_glpi_totals, new_glpi_totals)
 
+    new_closed = s.get_closed_today_from_new_glpi(glpi_user, glpi_password)
+    old_closed = s.get_closed_today_from_old_glpi(glpi_user, glpi_password)
+    closed_ones = s.glpi_totals(old_closed, new_closed)
+
     update_sheets(new_glpi_totals[1], 'NewGLPI')
     update_sheets(old_glpi_totals[1], 'OldGLPI')
-    update_sheets(glpi_totlas[1], 'TotalGLPI')
+    update_sheets(glpi_totals[1], 'TotalGLPI')
+    update_sheets(closed_ones[1], 'FechadosHoje')
