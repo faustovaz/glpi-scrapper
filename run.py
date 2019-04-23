@@ -6,7 +6,6 @@ import scrapper as s
 import os
 from dotenv import load_dotenv
 
-SPREADSHEET_ID = '1frgS8i5aqSmBn4q6J1jJfDcqOoy_3dVdGzidmbB5COI'
 
 def clean_values(sheet, range):
     sheet.values().clear(spreadsheetId=os.getenv('CHAMADOS_SPREADSHEET_ID'),
@@ -23,40 +22,28 @@ def update_sheet(sheet, range, values):
 def transform(dictionary):
     return [list(item) for item in dictionary.items()]
 
+def update_sheets(data, sheet_name):
+    total = reduce(lambda x,y:x+y, list(data.values()))
+    now = datetime.now()
+    updated_at = 'Atualizado em {}'.format(now.strftime('%d/%m/%Y %H:%M:%S'))
+    update_sheet(sheets, '{}!B2'.format(sheet_name), [[total]])
+    update_sheet(sheets, '{}!A4:B24'.format(sheet_name), transform(data))
+    update_sheet(sheets, '{}!A24'.format(sheet_name), [[updated_at]])
+
 if __name__ == '__main__':
     env_file = os.path.join(os.path.dirname(__file__), 'credentials.env')
     load_dotenv(env_file)
     glpi_user = os.getenv('GLPI_USER')
     glpi_password = os.getenv('GLPI_PASSWORD')
     cred_file = os.path.join(os.path.dirname(__file__), 'credentials.json')
-
     creds = ServiceAccountCredentials.from_json_keyfile_name(cred_file)
     service = build('sheets', 'v4', credentials=creds)
     sheets = service.spreadsheets()
 
     new_glpi_totals = s.get_totals_from_new_glpi(glpi_user, glpi_password)
-    total = reduce(lambda x,y:x+y, list(new_glpi_totals[1].values()))
-    update_sheet(sheets, 'NewGLPI!B2', [[total]])
-    update_sheet(sheets, 'NewGLPI!A4:B24', transform(new_glpi_totals[1]))
-    update_sheet(sheets,
-                'NewGLPI!A24',
-                [['Atualizado em {}' \
-                        .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))]])
-
     old_glpi_totals = s.get_totals_from_old_glpi(glpi_user, glpi_password)
-    total = reduce(lambda x,y:x+y, list(old_glpi_totals[1].values()))
-    update_sheet(sheets, 'OldGLPI!B2', [[total]])
-    update_sheet(sheets, 'OldGLPI!A4:B24', transform(old_glpi_totals[1]))
-    update_sheet(sheets,
-                'OldGLPI!A24',
-                [['Atualizado em {}' \
-                        .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))]])
-
     glpi_totals = s.glpi_totals(old_glpi_totals, new_glpi_totals)
-    total = reduce(lambda x,y:x+y, list(glpi_totals[1].values()))
-    update_sheet(sheets, 'TotalGLPI!B2', [[total]])
-    update_sheet(sheets, 'TotalGLPI!A4:B24', transform(glpi_totals[1]))
-    update_sheet(sheets,
-                'TotalGLPI!A24',
-                [['Atualizado em {}' \
-                        .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'))]])
+
+    update_sheets(new_glpi_totals[1], 'NewGLPI')
+    update_sheets(old_glpi_totals[1], 'OldGLPI')
+    update_sheets(glpi_totlas[1], 'TotalGLPI')
