@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import NoSuchElementException
 
 def login_into_new_glpi(user, password):
     return login_into_glpi('https://chamados.unila.edu.br', user, password)
@@ -33,14 +34,17 @@ def get_tables_from_new_glpi(user, password):
 def get_tables_from_glpi(browser):
     tables = []
     while True:
-        table = browser.find_element_by_class_name('tab_cadrehov')
-        tables.append(table.get_attribute('innerHTML'))
-        pager = browser.find_element_by_class_name('tab_cadre_pager')
-        forward_links = pager.find_elements_by_class_name('right')
-        if len(forward_links) < 2:
-            break
-        next_page = forward_links[0].find_element_by_tag_name('a')
-        browser.get(next_page.get_property('href'))
+        try:
+            table = browser.find_element_by_class_name('tab_cadrehov')
+            tables.append(table.get_attribute('innerHTML'))
+            pager = browser.find_element_by_class_name('tab_cadre_pager')
+            forward_links = pager.find_elements_by_class_name('right')
+            if len(forward_links) < 2:
+                break
+            next_page = forward_links[0].find_element_by_tag_name('a')
+            browser.get(next_page.get_property('href'))
+        except NoSuchElementException:
+            pass
     browser.close()
     return tables
 
