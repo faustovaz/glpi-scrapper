@@ -50,7 +50,7 @@ def get_tables_from_glpi(url, user, password, savedSearchLink):
             next_page = forward_links[0].find_element_by_tag_name('a')
             browser.get(next_page.get_property('href'))
         except NoSuchElementException:
-            pass
+            break
     browser.close()
     return tables
 
