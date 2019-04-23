@@ -52,3 +52,5 @@ if __name__ == '__main__':
     update_sheets(old_glpi_totals[1], 'OldGLPI')
     update_sheets(glpi_totals[1], 'TotalGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
+
+    print("Done! All sheets updated!")
