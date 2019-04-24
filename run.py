@@ -48,10 +48,18 @@ if __name__ == '__main__':
     old_closed = s.get_closed_today_from_old_glpi(glpi_user, glpi_password)
     closed_ones = s.glpi_totals(old_closed, new_closed)
 
+    new_closed_yesterday = s.get_closed_yesterday_from_new_glpi(glpi_user,
+                                                                glpi_password)
+    old_closed_yesterday = s.get_closed_yesterday_from_old_glpi(glpi_user,
+                                                                glpi_password)
+    closed_ones_yesterday = s.glpi_totals(old_closed_yesterday,
+                                        new_closed_yesterday)
+
     update_sheets(new_glpi_totals[1], 'NewGLPI')
     update_sheets(old_glpi_totals[1], 'OldGLPI')
     update_sheets(glpi_totals[1], 'TotalGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
+    update_sheets(closed_ones_yesterday[1], 'FechadosOntem')
 
     print("Done! All sheets updated on {}!" \
             .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S')))

@@ -35,6 +35,12 @@ def get_totals_from_old_glpi(user, password):
 def get_closed_today_from_old_glpi(user, password):
     return get_search_result_from_old_glpi(user, password, 188)
 
+def get_closed_yesterday_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 36)
+
+def get_closed_yesterday_from_old_glpi(user, password):
+    return get_search_result_from_old_glpi(user, password, 189)
+
 def get_tables_from_glpi(url, user, password, savedSearchLink):
     browser = login_into_glpi(url, user, password)
     browser.get(savedSearchLink)
