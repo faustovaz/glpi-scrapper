@@ -40,37 +40,54 @@ if __name__ == '__main__':
     service = build('sheets', 'v4', credentials=creds)
     sheets = service.spreadsheets()
 
-    new_glpi_totals = s.get_totals_from_new_glpi(glpi_user, glpi_password)
-    old_glpi_totals = s.get_totals_from_old_glpi(glpi_user, glpi_password)
-    glpi_totals = s.glpi_totals(old_glpi_totals, new_glpi_totals)
+    new_glpi_searchs = {
+        'new_glpi_open_totals': 18,
+        'new_glpi_closed_today': 31,
+        'new_glpi_closed_this_week': 37,
+        'new_glpi_closed_this_month': 38
+    }
 
-    new_closed = s.get_closed_today_from_new_glpi(glpi_user, glpi_password)
-    old_closed = s.get_closed_today_from_old_glpi(glpi_user, glpi_password)
-    closed_ones = s.glpi_totals(old_closed, new_closed)
+    old_glpi_searchs = {
+        'old_glpi_open_totals': 38,
+        'old_glpi_closed_today': 188,
+        'old_glpi_closed_this_week': 190,
+        'old_glpi_closed_this_month': 191
+    }
 
-    new_closed_this_week = s.get_closed_this_week_from_new_glpi(glpi_user,
-                                                                glpi_password)
-    old_closed_this_week = s.get_closed_this_week_from_old_glpi(glpi_user,
-                                                                glpi_password)
+    news = s.get_search_results_from_glpi('https://chamados.unila.edu.br',
+                                            glpi_user,
+                                            glpi_password,
+                                            new_glpi_searchs,
+                                            system_index=6,
+                                            employee_index=8,
+                                            user_index=7)
 
-    new_closed_this_month = s.get_closed_this_month_from_new_glpi(glpi_user,
-                                                                  glpi_password)
+    olds = s.get_search_results_from_glpi('https://chamados-old.unila.edu.br',
+                                            glpi_user,
+                                            glpi_password,
+                                            old_glpi_searchs,
+                                            system_index=4,
+                                            employee_index=7,
+                                            user_index=3)
 
-    old_closed_this_month = s.get_closed_this_month_from_old_glpi(glpi_user,
-                                                                  glpi_password)
+    glpi_totals = s.glpi_totals(olds.get('old_glpi_open_totals'),
+                                news.get('new_glpi_open_totals'))
 
-    closed_this_week = s.glpi_totals(old_closed_this_week,
-                                     new_closed_this_week)
+    closed_ones = s.glpi_totals(olds.get('old_glpi_closed_today'),
+                                news.get('new_glpi_closed_today'))
 
-    close_this_month = s.glpi_totals(old_closed_this_month,
-                                     new_closed_this_month)
+    closed_this_week = s.glpi_totals(olds.get('old_glpi_closed_this_week'),
+                                    news.get('new_glpi_closed_this_week'))
 
-    update_sheets(new_glpi_totals[1], 'NewGLPI')
-    update_sheets(old_glpi_totals[1], 'OldGLPI')
+    closed_this_month = s.glpi_totals(olds.get('old_glpi_closed_this_month'),
+                                      news.get('new_glpi_closed_this_month'))
+
     update_sheets(glpi_totals[1], 'TotalGLPI')
+    update_sheets(news.get('new_glpi_open_totals')[1], 'NewGLPI')
+    update_sheets(olds.get('old_glpi_open_totals')[1], 'OldGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
     update_sheets(closed_this_week[1], 'FechadosNaSemana')
-    update_sheets(close_this_month[1], 'FechadosNoMes')
+    update_sheets(closed_this_month[1], 'FechadosNoMes')
 
     print("Done! All sheets updated on {}!" \
             .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S')))
