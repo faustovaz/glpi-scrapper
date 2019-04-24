@@ -26,20 +26,26 @@ def get_search_result_from_old_glpi(user, password, search_id):
 def get_totals_from_new_glpi(user, password):
     return get_search_result_from_new_glpi(user, password, 18)
 
-def get_closed_today_from_new_glpi(user, password):
-    return get_search_result_from_new_glpi(user, password, 31)
-
 def get_totals_from_old_glpi(user, password):
     return get_search_result_from_old_glpi(user, password, 38)
+
+def get_closed_today_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 31)
 
 def get_closed_today_from_old_glpi(user, password):
     return get_search_result_from_old_glpi(user, password, 188)
 
-def get_closed_yesterday_from_new_glpi(user, password):
-    return get_search_result_from_new_glpi(user, password, 36)
+def get_closed_this_week_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 37)
 
-def get_closed_yesterday_from_old_glpi(user, password):
-    return get_search_result_from_old_glpi(user, password, 189)
+def get_closed_this_week_from_old_glpi(user, password):
+    return get_search_result_from_old_glpi(user, password, 190)
+
+def get_closed_this_month_from_new_glpi(user, password):
+    return get_search_result_from_new_glpi(user, password, 38)
+
+def get_closed_this_month_from_old_glpi(user, password):
+    return get_search_result_from_old_glpi(user, password, 191)    
 
 def get_tables_from_glpi(url, user, password, savedSearchLink):
     browser = login_into_glpi(url, user, password)
