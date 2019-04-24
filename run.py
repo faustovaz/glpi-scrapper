@@ -53,4 +53,5 @@ if __name__ == '__main__':
     update_sheets(glpi_totals[1], 'TotalGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
 
-    print("Done! All sheets updated!")
+    print("Done! All sheets updated on {}!" \
+            .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S')))
