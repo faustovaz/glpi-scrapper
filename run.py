@@ -23,7 +23,7 @@ def transform(dictionary):
     return [list(item) for item in dictionary.items()]
 
 def update_sheets(data, sheet_name):
-    total = reduce(lambda x,y:x+y, list(data.values()))
+    total = reduce(lambda x,y:x+y, list(data.values()), 0)
     now = datetime.now()
     updated_at = 'Atualizado em {}'.format(now.strftime('%d/%m/%Y %H:%M:%S'))
     update_sheet(sheets, '{}!B2'.format(sheet_name), [[total]])
