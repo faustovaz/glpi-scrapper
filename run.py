@@ -5,6 +5,7 @@ from datetime import datetime
 import scrapper as s
 import os
 from dotenv import load_dotenv
+import socket
 
 
 def clean_values(sheet, range):
@@ -31,6 +32,7 @@ def update_sheets(data, sheet_name):
     update_sheet(sheets, '{}!A24'.format(sheet_name), [[updated_at]])
 
 if __name__ == '__main__':
+    socket.setdefaulttimeout(300)    
     env_file = os.path.join(os.path.dirname(__file__), 'credentials.env')
     load_dotenv(env_file)
     glpi_user = os.getenv('GLPI_USER')
