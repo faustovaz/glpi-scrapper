@@ -14,7 +14,8 @@ def get_search_results_from_glpi(url, user, password, search_ids, **kw):
         results.update({key: get_totals_from_glpi(tables,
                                     system_index=kw.get('system_index'),
                                     employee_index=kw.get('employee_index'),
-                                    user_index=kw.get('user_index'))})
+                                    user_index=kw.get('user_index'),
+                                    type_index=kw.get('type_index'))})
     browser.close()
     return results
 
@@ -46,7 +47,7 @@ def get_tables_from_glpi(browser, savedSearchLink):
     return tables
 
 def get_totals_from_glpi(tables, **kw):
-    users, employees, systems = [{},{},{}]
+    users, employees, systems, types = [{},{},{},{}]
     for table in tables:
         bs = BeautifulSoup(table, features="html.parser")
         trs = bs.find_all('tr')
@@ -56,10 +57,12 @@ def get_totals_from_glpi(tables, **kw):
                 system = get_tag_text(tds[kw.get('system_index')])
                 employee = get_tag_text(tds[kw.get('employee_index')])
                 user = get_tag_text(tds[kw.get('user_index')])
+                type = get_tag_text(tds[kw.get('type_index')])
                 users[user] = users.get(user, 0) + 1
                 employees[employee] = employees.get(employee, 0) + 1
                 systems[system] = systems.get(system, 0) + 1
-    return [users, employees, systems]
+                types[type] = types.get(type, 0) + 1
+    return [users, employees, systems, types]
 
 def get_tag_text(tag):
     t = 'Não atríbuido' if tag.text == '' else next(tag.strings).strip()
@@ -69,7 +72,7 @@ def get_tag_text(tag):
 
 def glpi_totals(old_glpi_totals, new_glpi_totals):
     totals = []
-    for i,d in enumerate(old_glpi_totals):
+    for i in range(len(old_glpi_totals)):
         totals.append(get_totals(old_glpi_totals[i], new_glpi_totals[i]))
     return totals
 

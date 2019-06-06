@@ -62,7 +62,8 @@ if __name__ == '__main__':
                                             new_glpi_searchs,
                                             system_index=6,
                                             employee_index=8,
-                                            user_index=7)
+                                            user_index=7,
+                                            type_index=10)
 
     olds = s.get_search_results_from_glpi('https://chamados-old.unila.edu.br',
                                             glpi_user,
@@ -70,7 +71,8 @@ if __name__ == '__main__':
                                             old_glpi_searchs,
                                             system_index=4,
                                             employee_index=7,
-                                            user_index=3)
+                                            user_index=3,
+                                            type_index=8)
 
     glpi_totals = s.glpi_totals(olds.get('old_glpi_open_totals'),
                                 news.get('new_glpi_open_totals'))
@@ -85,6 +87,7 @@ if __name__ == '__main__':
                                       news.get('new_glpi_closed_this_month'))
 
     update_sheets(glpi_totals[1], 'TotalGLPI')
+    update_sheets(glpi_totals[-1], 'NewGLPITypes')
     update_sheets(news.get('new_glpi_open_totals')[1], 'NewGLPI')
     update_sheets(olds.get('old_glpi_open_totals')[1], 'OldGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
@@ -93,3 +96,4 @@ if __name__ == '__main__':
 
     print("Done! All sheets updated on {}!" \
             .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S')))
+            
