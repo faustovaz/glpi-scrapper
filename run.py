@@ -24,11 +24,13 @@ def transform(dictionary):
     return [list(item) for item in dictionary.items()]
 
 def update_sheets(data, sheet_name):
-    total = reduce(lambda x,y:x+y, list(data.values()), 0)
+    total = reduce(lambda x,y:x+y, list(data[1].values()), 0)
     now = datetime.now()
     updated_at = 'Atualizado em {}'.format(now.strftime('%d/%m/%Y %H:%M:%S'))
     update_sheet(sheets, '{}!B2'.format(sheet_name), [[total]])
-    update_sheet(sheets, '{}!A4:B24'.format(sheet_name), transform(data))
+    update_sheet(sheets, '{}!M2'.format(sheet_name), [[total]])
+    update_sheet(sheets, '{}!A4:B24'.format(sheet_name), transform(data[1]))
+    update_sheet(sheets, '{}!L4:M5'.format(sheet_name), transform(data[-1]))
     update_sheet(sheets, '{}!A24'.format(sheet_name), [[updated_at]])
 
 if __name__ == '__main__':
@@ -86,13 +88,12 @@ if __name__ == '__main__':
     closed_this_month = s.glpi_totals(olds.get('old_glpi_closed_this_month'),
                                       news.get('new_glpi_closed_this_month'))
 
-    update_sheets(glpi_totals[1], 'TotalGLPI')
-    update_sheets(glpi_totals[-1], 'TotalTiposChamados')
-    update_sheets(news.get('new_glpi_open_totals')[1], 'NewGLPI')
-    update_sheets(olds.get('old_glpi_open_totals')[1], 'OldGLPI')
-    update_sheets(closed_ones[1], 'FechadosHoje')
-    update_sheets(closed_this_week[1], 'FechadosNaSemana')
-    update_sheets(closed_this_month[1], 'FechadosNoMes')
+    update_sheets(glpi_totals, 'TotalGLPI')
+    update_sheets(news.get('new_glpi_open_totals'), 'NewGLPI')
+    update_sheets(olds.get('old_glpi_open_totals'), 'OldGLPI')
+    update_sheets(closed_ones, 'FechadosHoje')
+    update_sheets(closed_this_week, 'FechadosNaSemana')
+    update_sheets(closed_this_month, 'FechadosNoMes')
 
     print("Done! All sheets updated on {}!" \
             .format(datetime.now().strftime('%d/%m/%Y %H:%M:%S')))
