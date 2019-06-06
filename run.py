@@ -87,7 +87,7 @@ if __name__ == '__main__':
                                       news.get('new_glpi_closed_this_month'))
 
     update_sheets(glpi_totals[1], 'TotalGLPI')
-    update_sheets(glpi_totals[-1], 'NewGLPITypes')
+    update_sheets(glpi_totals[-1], 'TotalTiposChamados')
     update_sheets(news.get('new_glpi_open_totals')[1], 'NewGLPI')
     update_sheets(olds.get('old_glpi_open_totals')[1], 'OldGLPI')
     update_sheets(closed_ones[1], 'FechadosHoje')
